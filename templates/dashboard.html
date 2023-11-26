@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='styles/dashboard.css')}}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>DOD - Dashboard</title>
+  </head>
+  <body>
+    <nav>
+      <div class="vertical-navbar">
+        <div class="menu-item active" data-tooltip="Dashboard">
+          <a href="{{ url_for('dashboard') }}"
+            ><i class="ri-dashboard-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Upload List">
+          <a href="{{ url_for('uploadList')}}"
+            ><i class="ri-upload-cloud-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Add Participant">
+          <a href="{{ url_for('addParticipant') }}"
+            ><i class="ri-user-add-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Event Stats">
+          <a href="{{ url_for('main_page') }}"
+            ><i class="ri-line-chart-line ri-sm"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+    <div class="main-container">
+      <div
+        id="participant-info-container"
+        class="participant-info-container"
+        style="display: none"
+      >
+        <i id="close-btn" class="ri-close-circle-line ri-2x"></i>
+        <div class="information">
+          <label for="register_number">Register Number:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="register_number"
+            disabled
+          />
+
+          <label for="team_name">Team Name:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="team_name"
+            disabled
+          />
+
+          <label for="mobile_number">Mobile Number:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="mobile_number"
+            disabled
+          />
+
+          <label for="accommodation">Accommodation:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="accommodation"
+            disabled
+          />
+
+          <label for="email_id">Email ID:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="email_id"
+            disabled
+          />
+
+          <label for="hostel_block">Hostel Block:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="hostel_block"
+            disabled
+          />
+
+          <label for="gender">Gender:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="gender"
+            disabled
+          />
+
+          <label for="checked_in">Checked In:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="checked_in"
+            disabled
+          />
+
+          <label for="onboarding_email_sent">Onboarding Email Sent:</label>
+          <input
+            type="text"
+            class="participant-info-input"
+            id="onboarding_email_sent"
+            disabled
+          />
+        </div>
+      </div>
+
+      <div class="container">
+        <div class="filters">
+          <div class="filter_container">
+            <div class="search_area">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search by name or username"
+              />
+            </div>
+            <div class="filter_by_dayschollar">
+              <button id="sortDayScholar">Filter Dayschollar</button>
+            </div>
+            <div class="filter_by_hosteller">
+              <button id="sortHosteller">Filter Hosteller</button>
+            </div>
+            <div class="filter_by_male">
+              <button id="filterMale">Filter Male</button>
+            </div>
+            <div class="filter_by_female">
+              <button id="filterFemale">Filter Female</button>
+            </div>
+          </div>
+        </div>
+        <div class="participant-tables">
+          <table>
+            <thead>
+              <tr>
+                <th>Participant</th>
+                <th>Team Name</th>
+                <th>Gender</th>
+                <th>Checked In</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for participant in datalist %}
+              <tr>
+                <td>{{ participant.participant_name }}</td>
+                <td>{{ participant.team_name|capitalize }}</td>
+                <td>{{ participant.gender|capitalize }}</td>
+                {% if participant.checked_in == False %}
+                <td><i class="ri-close-line"></i></td>
+                {% else %}
+                <td><i class="ri-check-double-fill"></i></td>
+                {% endif %}
+                <td class="participant_info">
+                  <a
+                    href="{{ url_for('userInfo', slug=participant.slug)}}"
+                    class="tooltip-container"
+                  >
+                    <i class="ri-information-line"></i>
+                    <span class="tooltip">Information</span>
+                  </a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="{{url_for('static', filename='scripts/sorter.js')}}"></script>
+</html>

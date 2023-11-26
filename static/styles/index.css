@@ -1,0 +1,277 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "ClashGrotesk";
+}
+
+@font-face {
+  font-family: "ClashGrotesk";
+  src: url(../fonts/ClashGrotesk-Variable.ttf);
+}
+
+::selection {
+  user-select: none;
+}
+body {
+  background-color: #12121e;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-container {
+  max-width: 1200px;
+  border-radius: 20px;
+  height: calc(100% - 3rem);
+  width: calc(100% - 20rem);
+  box-sizing: border-box;
+}
+
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: 1.4fr 1fr 1fr;
+  gap: 0.5rem;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "timer timer timer timer"
+    "total_participants total_boys total_girls total_checkedin"
+    "total_hosteller total_dayschollars list_participants list_participants";
+}
+
+.timer,
+.total_boys,
+.total_checkedin,
+.total_dayschollars,
+.total_girls,
+.total_participants,
+.list_participants,
+.total_hosteller {
+  border-radius: 2.3125rem;
+  background-color: #1d1d2a;
+  box-sizing: border-box;
+  padding: 2rem 1.5rem;
+  color: #fff;
+}
+
+p {
+  text-transform: uppercase;
+  text-align: center;
+  margin: 0;
+  font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.metrics {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  height: 90%;
+  font-weight: 700;
+  font-size: 5rem;
+}
+
+/* TIMER */
+.timer {
+  grid-area: timer;
+}
+
+.timer h1 {
+  color: #fff;
+  text-align: left;
+  font-family: Clash Grotesk;
+  font-size: 1.1rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  text-align: left;
+}
+
+#timer {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 6.5vw;
+  text-align: center;
+  font-weight: 600;
+}
+
+.total_participants {
+  grid-area: total_participants;
+}
+
+.total_boys {
+  grid-area: total_boys;
+}
+
+.total_girls {
+  grid-area: total_girls;
+}
+
+.total_checkedin {
+  grid-area: total_checkedin;
+}
+
+.total_hosteller {
+  grid-area: total_hosteller;
+}
+
+.total_dayschollars {
+  grid-area: total_dayschollars;
+}
+
+.list_participants {
+  grid-area: list_participants;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.arrow {
+  width: 5rem;
+  animation: bounce 2s infinite;
+}
+
+a h1 {
+  width: calc(100% + 3rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@keyframes bounce {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
+    transform: translateX(0);
+  }
+  40% {
+    transform: translateX(-15px);
+  }
+  60% {
+    transform: translateX(-5px);
+  }
+}
+
+/* Navbar Styles */
+.vertical-navbar {
+  height: 100%;
+  width: 40px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #1d1d2a;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 20px 0 20px;
+}
+
+.menu-item {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.menu-item i {
+  font-size: 24px;
+}
+
+.menu-item:hover {
+  background-color: #12121e;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  left: 100%;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  opacity: 1;
+  margin-left: 10px;
+}
+
+.active {
+  background-color: #12121e;
+}
+
+/* Media Query for smaller screens */
+@media (max-width: 600px) {
+  .main-container {
+    border-radius: 20px;
+    height: calc(100% - 3rem);
+    width: calc(100% - 3rem);
+    box-sizing: border-box;
+  }
+
+  .container {
+    grid-template-areas:
+      "timer"
+      "total_participants"
+      "total_boys"
+      "total_girls"
+      "total_checkedin"
+      "total_hosteller"
+      "total_dayschollars"
+      "list_participants";
+    grid-template-columns: 1fr;
+    grid-template-rows: repeat(7, 1fr);
+  }
+
+  .timer h1 {
+    text-align: center;
+    font-size: 1rem;
+    font-weight: 300;
+  }
+
+  a {
+    text-align: center;
+    font-size: 2vw;
+  }
+  a h1 {
+    font-weight: 600;
+  }
+  p {
+    font-size: 0.85rem;
+  }
+  .metrics {
+    font-size: 2rem;
+  }
+
+  .arrow {
+    width: 2rem;
+    animation: bounce 2s infinite;
+  }
+
+  .trigger {
+    justify-content: space-around;
+  }
+}

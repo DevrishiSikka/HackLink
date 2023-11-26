@@ -1,0 +1,223 @@
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "ClashGrotesk";
+}
+
+@font-face {
+  font-family: "ClashGrotesk";
+  src: url(../fonts/ClashGrotesk-Variable.ttf);
+
+}
+
+::selection {
+  user-select: none;
+}
+
+a{
+  text-decoration: none;
+  color: #fff;
+}
+
+body {
+  background-color: #12121e;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-container {
+  max-width: 900px;
+  border-radius: 20px;
+  height: calc(100% - 3rem);
+  width: calc(100% - 1rem);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  box-sizing: border-box;
+  padding: 3rem;
+}
+
+.error{
+  color: rgba(255, 0, 0, 0.71);
+  width: 100%;
+  padding: 2rem;
+  border-radius: 2.3125rem;
+  align-items: center;
+  justify-content: center;
+  display: flex;
+  font-weight: 100;
+}
+input, select{
+  box-sizing: border-box;
+  height: calc(100% - 20px);
+  width: calc(100% - 20px);
+  border-radius: 2.3125rem;
+  outline: none;
+  border: none;
+  background-color: #1D1D2A;
+  color: #ffffff;
+  padding-left: 20px;
+}
+
+option, select {
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  text-align: center;
+}
+
+::placeholder{
+  color: #fff;
+  text-transform: uppercase;
+  font-weight: 500;
+  /* padding: 20px; */
+}
+
+input[type=submit]{
+  background-color: #fff;
+  color: #12121e;
+  font-size: 2rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+.container {  
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+  gap: 10px 10px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "participant_name register_number"
+    "team_name team_name"
+    "registered_mobilenumber is_hosteller"
+    "registered_emailid registered_emailid"
+    "hostel_block gender"
+    "submit_button submit_button"
+    "upload_list upload_list";
+    
+}
+
+.container > *:not(.upload_list){
+  border-radius: 2.3125rem;
+  border: 1px dashed #ffffff12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.participant_name { 
+  grid-area: participant_name; 
+}
+
+.register_number { 
+  grid-area: register_number; 
+}
+
+.team_name { 
+  grid-area: team_name; 
+}
+
+.registered_mobilenumber { 
+  grid-area: registered_mobilenumber; 
+}
+
+.registered_emailid { 
+  grid-area: registered_emailid; 
+}
+
+.hostel_block { 
+  grid-area: hostel_block; 
+}
+
+.gender {
+   grid-area: gender; 
+  }
+
+.submit_button { 
+  grid-area: submit_button; 
+}
+
+.upload_list { 
+  display: flex;
+  flex-direction: column;
+  color: #fff;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  grid-area: upload_list; 
+}
+
+.upload_list a{
+  text-decoration: underline;
+  font-weight: 700;
+}
+
+.is_hosteller{
+  grid-area: is_hosteller; 
+}
+
+/* Navbar Styles */
+.vertical-navbar {
+  height: 100%;
+  width: 40px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #1d1d2a;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 20px 0 20px;
+}
+
+.menu-item {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.menu-item i {
+  font-size: 24px;
+}
+
+.menu-item:hover {
+  background-color: #12121e;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  left: 100%;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  opacity: 1;
+  margin-left: 10px;
+}
+
+.active {
+  background-color: #12121e;
+}

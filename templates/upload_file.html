@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/styles/upload_file.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>Upload File</title>
+  </head>
+  <body>
+    <nav>
+      <div class="vertical-navbar">
+        <div class="menu-item" data-tooltip="Dashboard">
+          <a href="{{ url_for('dashboard') }}"
+            ><i class="ri-dashboard-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item active" data-tooltip="Upload List">
+          <a href="{{ url_for('uploadList')}}"
+            ><i class="ri-upload-cloud-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item active" data-tooltip="Add Participant">
+          <a href="{{ url_for('addParticipant') }}"
+            ><i class="ri-user-add-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Event Stats">
+          <a href="{{ url_for('main_page') }}"
+            ><i class="ri-line-chart-line ri-sm"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+    <div class="main-container">
+      <h3>
+        MAKE SURE THAT THE EXCE TEMPLATE YOU ARE USING MUST BE IN THE FOLLOWING
+        FORMAT THAT YOU CAN DOWNLOAD FROM <a href="#">HERE</a>
+      </h3>
+      <div class="card">
+        <h3>Upload Files</h3>
+        <div class="drop_box">
+          <input
+            type="file"
+            hidden
+            accept=".xlsx"
+            id="fileID"
+            style="display: none"
+          />
+          <button class="btn">Choose File</button>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="/scripts/fileupload.js"></script>
+</html>

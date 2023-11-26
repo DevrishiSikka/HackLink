@@ -1,0 +1,135 @@
+<html>
+  <head>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.4/html5-qrcode.min.js"
+      integrity="sha512-k/KAe4Yff9EUdYI5/IAHlwUswqeipP+Cp5qnrsUjTPCgl51La2/JhyyjNciztD7mWNKLSXci48m7cctATKfLlQ=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <title>House of Developers</title>
+  </head>
+  <body>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;600&display=swap");
+      * {
+        font-family: "Inter", sans-serif;
+        font-size: 1.3rem;
+      }
+
+      body {
+        overflow: hidden;
+        height: 100vh;
+        width: 100vw;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #12121e;
+        border: none;
+      }
+
+      main {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+        width: 100%;
+        flex-direction: column;
+      }
+
+      #reader {
+        border: 1px solid;
+        height: 700px;
+        width: 700px;
+        border: none;
+      }
+
+      #result {
+        text-align: center;
+        font-size: 1.5rem;
+        border: none !important;
+      }
+
+      .popup {
+        height: 100%;
+        width: 100%;
+        font-family: "Inter", sans-serif;
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        padding: 15px;
+        background: #fff;
+        border: 1px solid #ccc;
+        box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        text-align: center;
+      }
+
+      .popup p {
+        font-family: "Inter", sans-serif;
+        font-size: 3rem;
+        font-weight: bold;
+      }
+    </style>
+    <main>
+      <div id="reader"></div>
+      <div class="popup" id="popup">Response Data</div>
+      <div class="mobile"></div>
+    </main>
+    <script>
+      const scanner = new Html5QrcodeScanner("reader", {
+        qrbox: {
+          height: 400,
+          width: 400,
+        },
+        fps: 1,
+      });
+
+      scanner.render(success, error);
+
+      const popup = document.getElementById("popup");
+
+      function success(result) {
+        const storedData = localStorage.getItem("qr_data");
+        const formData = new FormData();
+        formData.append("qr_data", result);
+
+        if (!storedData || storedData !== result) {
+          localStorage.setItem("qr_data", result);
+
+          fetch("http://127.0.0.1:5000/api/scanQR", {
+            method: "POST",
+            body: formData,
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              document.getElementById("popup").innerHTML = `
+                <div class='data-container'>
+                  <p>
+                  </br>
+                    Name: ${data.data}
+                  </p>
+                </div>
+            `;
+
+              popup.style.display = "block";
+
+              setTimeout(() => {
+                popup.style.display = "none";
+                scanner.start({});
+                document.getElementById("result").innerHTML = "";
+              }, 2000);
+            })
+            .catch((err) => {});
+        } else {
+          console.log("QR code data is already present in local storage.");
+        }
+      }
+
+      function error(err) {
+        console.log(err);
+      }
+    </script>
+  </body>
+</html>

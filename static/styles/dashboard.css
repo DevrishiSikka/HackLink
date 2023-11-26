@@ -1,0 +1,318 @@
+/* Reset styles */
+* {
+  padding: 0;
+  margin: 0;
+  font-family: "ClashGrotesk";
+}
+
+/* Font face */
+@font-face {
+  font-family: "ClashGrotesk";
+  src: url(../fonts/ClashGrotesk-Variable.ttf);
+}
+
+/* Text selection */
+::selection {
+  user-select: none;
+}
+
+/* Links */
+a {
+  text-decoration: none;
+  color: #fff;
+}
+
+/* Body styles */
+body {
+  background-color: #12121e;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Main container */
+.main-container {
+  max-width: 1250px;
+  border-radius: 20px;
+  height: calc(100% - 3rem);
+  width: calc(100% - 1rem);
+  box-sizing: border-box;
+}
+
+/* Grid container */
+.container {
+  height: 100%;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 3.5fr 1fr;
+  grid-template-rows: 1fr 1fr 2fr;
+  gap: 10px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "participant-tables filters"
+    "participant-tables filters"
+    "participant-tables .";
+}
+
+/* Filter and participant tables styling */
+.filters,
+.participant-tables {
+  border-radius: 20px;
+  box-sizing: border-box;
+  padding: 1rem;
+  overflow: auto;
+}
+
+/* Scrollbar styling */
+.participant-tables::-webkit-scrollbar {
+  width: 3px;
+}
+
+/* Filters and tables grid areas */
+.filters {
+  grid-area: filters;
+}
+
+.participant-tables {
+  grid-area: participant-tables;
+  background-color: #1d1d2a;
+}
+
+/* Table styling */
+table {
+  color: #fff;
+  height: fit-content;
+  border-collapse: collapse;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  table-layout: fixed;
+}
+
+/* Table caption styling */
+table caption {
+  font-size: 1.5em;
+  margin: 0.5em 0 0.75em;
+}
+
+/* Table row styling */
+table tr {
+  border-bottom: 1px solid #ffffff1c;
+  padding: 0.35em;
+}
+
+/* Table header and data cell styling */
+table th,
+table td {
+  padding: 0.625em;
+  text-align: center;
+  font-size: 0.9em;
+}
+
+/* Table header styling */
+table th {
+  font-size: 1rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* Tooltip container */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+}
+
+/* Tooltip styling */
+.tooltip {
+  visibility: hidden;
+  width: 120px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 5px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -60px;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+/* Tooltip hover effect */
+.tooltip-container:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Filter container styles */
+.filter_container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  gap: 3px 3px;
+  grid-auto-flow: row;
+  grid-template-areas:
+    "search_area search_area"
+    "filter_by_dayschollar filter_by_hosteller"
+    "filter_by_male filter_by_female";
+}
+
+/* Filter and input styles */
+.filter_container button,
+.filter_container input {
+  width: 100%;
+  height: 100%;
+  border-radius: 2.3125rem;
+  text-align: center;
+  outline: none;
+  border: none;
+  background-color: #1d1d2a;
+  color: #fff;
+}
+
+/* Grid area styling for filters */
+.search_area { 
+  grid-area: search_area; 
+}
+
+.filter_by_dayschollar { 
+  grid-area: filter_by_dayschollar; 
+}
+
+.filter_by_hosteller { 
+  grid-area: filter_by_hosteller; 
+}
+
+.filter_by_male { 
+  grid-area: filter_by_male; 
+}
+
+.filter_by_female { 
+  grid-area: filter_by_female; 
+}
+
+/* Participant info container styling */
+.participant-info-container {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  box-sizing: border-box;
+  padding: 20px;
+  border-radius: 2.3125rem;
+  background-color: #12121e;
+  flex-direction: column;
+}
+
+/* Close button styling */
+#close-btn {
+  align-self: flex-end;
+}
+
+#close-btn:hover {
+  cursor: pointer;
+}
+
+/* Information container styling */
+.participant-info-container {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #12121e;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  color: white;
+}
+
+/* Information grid styling */
+.information {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  place-items: center;
+}
+
+/* Information label styling */
+.information label {
+  font-weight: 300;
+}
+
+/* Information input styling */
+.information input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  outline: none;
+  border: 1px solid #12121e;
+  color: #fff;
+}
+
+/* Navbar Styles */
+.vertical-navbar {
+  height: 100%;
+  width: 40px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #1d1d2a;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 20px 0 20px;
+}
+
+.menu-item {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.menu-item i {
+  font-size: 24px;
+}
+
+.menu-item:hover {
+  background-color: #12121e;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  left: 100%;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  opacity: 1;
+  margin-left: 10px;
+}
+
+.active {
+  background-color: #12121e;
+}

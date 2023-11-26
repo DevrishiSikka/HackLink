@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles/add_indivisual_participant.css') }}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>Add Participant</title>
+  </head>
+  <body>
+    <nav>
+      <div class="vertical-navbar">
+        <div class="menu-item" data-tooltip="Dashboard">
+          <a href="{{ url_for('dashboard') }}"
+            ><i class="ri-dashboard-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Upload List">
+          <a href="{{ url_for('uploadList')}}"
+            ><i class="ri-upload-cloud-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item active" data-tooltip="Add Participant">
+          <a href="{{ url_for('addParticipant') }}"
+            ><i class="ri-user-add-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Event Stats">
+          <a href="{{ url_for('main_page') }}"
+            ><i class="ri-line-chart-line ri-sm"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+    <div class="main-container">
+      {% if exists %}
+      <div class="error">
+        <h3>User Already Exists</h3>
+      </div>
+      {% endif %}
+      <form class="container" method="POST" action="">
+        {{ form.hidden_tag() }}
+        <div class="participant_name">{{ form.participant_name(size=20) }}</div>
+        <div class="register_number">{{ form.register_number(size=20) }}</div>
+        <div class="team_name">{{ form.team_name(size=20) }}</div>
+        <div class="registered_mobilenumber">
+          {{ form.mobile_number(size=20) }}
+        </div>
+        <div class="is_hosteller">{{ form.accomodation }}</div>
+        <div class="registered_emailid">{{ form.email_id(size=20) }}</div>
+        <div class="hostel_block">{{ form.hostel_block }}</div>
+        <div class="gender">{{ form.gender }}</div>
+        <div class="submit_button">{{ form.submit_button }}</div>
+        <div class="upload_list">
+          <p>OR</p>
+          <p><a href="#">UPLOAD LIST</a></p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

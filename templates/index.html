@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='styles/index.css')}}"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+    />
+    <title>Dungeon of Developers</title>
+  </head>
+  <body>
+    <nav>
+      <div class="vertical-navbar">
+        <div class="menu-item" data-tooltip="Dashboard">
+          <a href="{{ url_for('dashboard') }}"
+            ><i class="ri-dashboard-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Upload List">
+          <a href="{{ url_for('uploadList')}}"
+            ><i class="ri-upload-cloud-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Add Participant">
+          <a href="{{ url_for('addParticipant') }}"
+            ><i class="ri-user-add-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item active" data-tooltip="Event Stats">
+          <a href="{{ url_for('main_page') }}"
+            ><i class="ri-line-chart-line ri-sm"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+    <div class="main-container">
+      <div class="container">
+        <div class="timer">
+          <h1>Event will start in</h1>
+          <p id="timer"></p>
+        </div>
+        <div class="total_participants">
+          <p>Total Participants</p>
+          <h1 class="metrics">{{total_participants}}</h1>
+        </div>
+        <div class="total_boys">
+          <p>Total Boys</p>
+          <h1 class="metrics">{{male_count}}</h1>
+        </div>
+        <div class="total_girls">
+          <p>Total Girls</p>
+          <h1 class="metrics">{{female_count}}</h1>
+        </div>
+        <div class="total_checkedin">
+          <p>Total Checked-In</p>
+          <h1 class="metrics">{{checked_in_count}}</h1>
+        </div>
+        <div class="total_hosteller">
+          <p>Total Hosellers</p>
+          <h1 class="metrics">{{hosteller_Count}}</h1>
+        </div>
+        <div class="total_dayschollars">
+          <p>Total DayScholars</p>
+          <h1 class="metrics">{{dayscholar_Count}}</h1>
+        </div>
+        <div class="list_participants">
+          <a href="{{ url_for('dashboard') }}">
+            <h1 class="trigger">
+              List all Participants
+              <svg
+                class="arrow"
+                width="150"
+                height="38"
+                viewBox="0 0 150 38"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  d="M2.99609 16.25C1.61538 16.25 0.496094 17.3693 0.496094 18.75C0.496094 20.1307 1.61538 21.25 2.99609 21.25V16.25ZM148.794 20.5178C149.77 19.5415 149.77 17.9585 148.794 16.9822L132.884 1.07233C131.908 0.0960197 130.325 0.0960197 129.349 1.07233C128.372 2.04864 128.372 3.63155 129.349 4.60786L143.491 18.75L129.349 32.8921C128.372 33.8684 128.372 35.4514 129.349 36.4277C130.325 37.404 131.908 37.404 132.884 36.4277L148.794 20.5178ZM2.99609 21.25H147.026V16.25H2.99609V21.25Z"
+                  fill="white"
+                />
+              </svg>
+            </h1>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script src="{{url_for('static', filename='scripts/timer.js')}}"></script>
+</html>
