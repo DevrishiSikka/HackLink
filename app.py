@@ -36,7 +36,7 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
        files = [("attachment", ("qrcode.png", open(f"qrcodes/{filename}.png", "rb").read(), "image/png"))]
        response = requests.post(
         "https://api.mailgun.net/v3/mail.dungeonofdevs.tech/messages",
-        auth=("api", f"{credentials.get('api_key','')}"),
+        auth=("api", "b4723e863e8c6412293738c7c6cdcc20-5d2b1caa-2cc41297"),
         data={
             "from": "Dungeon Of Developers <devrishisikka@mail.dungeonofdevs.tech>",
             "to": f"{participant_name} <{participant_email}>",
@@ -171,12 +171,3 @@ def QRScannData():
             return jsonify({'data':'Not Found', 'present': False})
     except Exception as e:
         return jsonify({'error': str(e)})
-
-
-@app.route("/participant/upload")
-def uploadList():
-   return "madarchod ruk ja"
-
-@app.errorhandler(404)
-def notFoundError(e):
-    return render_template("404.html")
