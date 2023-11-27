@@ -4,9 +4,21 @@ from sqlalchemy import func
 import uuid
 import requests
 import qrcode
+import configparser
+
+
+# -------------------LOAD-CREDENTIALS------------------------------------------------------------- 
+
+def load_credentials(filename='config.ini'):
+    config = configparser.ConfigParser()
+    config.read(filename)
+    return config['Credentials']
+
+# ----------------------------------------------------------------------------------------------- 
+credentials = load_credentials()
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'y04a9a01793e34d6b81d06e030d14ddc7'
+app.config['SECRET_KEY'] = credentials.get("secret_key",'')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
 
 from models import Participant, db
@@ -24,7 +36,7 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
        files = [("attachment", ("qrcode.png", open(f"qrcodes/{filename}.png", "rb").read(), "image/png"))]
        response = requests.post(
         "https://api.mailgun.net/v3/mail.dungeonofdevs.tech/messages",
-        auth=("api", "b4723e863e8c6412293738c7c6cdcc20-5d2b1caa-2cc41297"),
+        auth=("api", f"{credentials.get('api_key','')}"),
         data={
             "from": "Dungeon Of Developers <devrishisikka@mail.dungeonofdevs.tech>",
             "to": f"{participant_name} <{participant_email}>",
@@ -117,6 +129,7 @@ def addParticipant():
 
   return render_template('add_indivisual_participant.html', form = form, exists=False)
 
+
 @app.route('/participant/info/<slug>')
 def userInfo(slug):
     participant = Participant.query.filter_by(slug=slug).first()
@@ -136,16 +149,12 @@ def userInfo(slug):
         return jsonify(participant_info)
     else:
         return jsonify({'error': 'Participant not found'}), 404
-    
-    
-@app.route("/participant/upload")
-def uploadList():
-   return "madarchod ruk ja"
 
 
 @app.route("/scanqr")
 def scanQR():
     return render_template('qrScanner.html')
+
 
 @app.route("/api/scanQR", methods=['POST'])
 def QRScannData():
@@ -162,3 +171,12 @@ def QRScannData():
             return jsonify({'data':'Not Found', 'present': False})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+
+@app.route("/participant/upload")
+def uploadList():
+   return "madarchod ruk ja"
+
+@app.errorhandler(404)
+def notFoundError(e):
+    return render_template("404.html")
