@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/styles/upload_file.css" />
+    <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='styles/upload_file.css')}}"
+    />
     <link
       href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
       rel="stylesheet"
@@ -38,7 +41,11 @@
     <div class="main-container">
       <h3>
         MAKE SURE THAT THE EXCE TEMPLATE YOU ARE USING MUST BE IN THE FOLLOWING
-        FORMAT THAT YOU CAN DOWNLOAD FROM <a href="#">HERE</a>
+        FORMAT THAT YOU CAN DOWNLOAD FROM
+        <a
+          href="{{url_for('static', filename='downloads/HackLink_Participant_Upload_Format.xlsx')}}"
+          >HERE</a
+        >
       </h3>
       <div class="card">
         <h3>Upload Files</h3>
@@ -55,5 +62,5 @@
       </div>
     </div>
   </body>
-  <script src="/scripts/fileupload.js"></script>
+  <script src="{{url_for('static', filename='scripts/fileupload.js')}}"></script>
 </html>

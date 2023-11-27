@@ -5,28 +5,32 @@ import uuid
 import requests
 import qrcode
 import configparser
+from werkzeug.utils import secure_filename
+import os
 
-
-# -------------------LOAD-CREDENTIALS------------------------------------------------------------- 
+# -------------------LOAD-CREDENTIALS--------------------------------------------------------------#
 
 def load_credentials(filename='config.ini'):
     config = configparser.ConfigParser()
     config.read(filename)
     return config['Credentials']
 
-# ----------------------------------------------------------------------------------------------- 
+# ------------------------------------------------------------------------------------------------# 
+
 credentials = load_credentials()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = credentials.get("secret_key",'')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
+app.config['ALLOWED_EXTENTIONS'] = {'xlsx'}
+app.config['UPLOAD_FOLDER'] = '/uploads'
+
 
 from models import Participant, db
 
-# logging.basicConfig(filename='app.log', level=logging.DEBUG)
+# --------------------------------------- UTIL-FUNCTIONS ------------------------------------------#
 
-# --------------------------------------- UTIL-FUNCTIONS ------------------------------------------
-
+# MAILING HELPER
 class SendParticipantEmail(Exception):
    def __init__(self, message, status_code):
       super().__init__(message)
@@ -52,8 +56,11 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
        
        return response
 
+# ALLOWED FILE EXTENTION
+def allowed_file(filename : str):
+  return "." in filename and filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENTIONS']
 
-# --------------------------------------- MAIN-ROUTES ------------------------------------------
+# --------------------------------------- MAIN-ROUTES ------------------------------------------------#
 
 @app.route('/')
 def main_page():
@@ -151,6 +158,20 @@ def userInfo(slug):
         return jsonify({'error': 'Participant not found'}), 404
 
 
+@app.route("/participant/upload", methods=['POST','GET'])
+def uploadList():
+    error = False
+    if request.method == "POST":
+        if "file" in request.files:
+            file = request.files['file']
+            if file and allowed_file(file.filename):
+                secure_filename = secure_filename(file.filename)
+                file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename))
+            else:
+                return render_template('upload_file.html', error=True)
+    return render_template('upload_file.html', error=False)
+
+# ----------------------------------------QR-SCANNER-UTILITY---------------------------------------------#
 @app.route("/scanqr")
 def scanQR():
     return render_template('qrScanner.html')
