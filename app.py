@@ -40,7 +40,7 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
        files = [("attachment", ("qrcode.png", open(f"qrcodes/{filename}.png", "rb").read(), "image/png"))]
        response = requests.post(
         "https://api.mailgun.net/v3/mail.dungeonofdevs.tech/messages",
-        auth=("api", "b4723e863e8c6412293738c7c6cdcc20-5d2b1caa-2cc41297"),
+        auth=("api", f"{credentials.get("api_key",'')}"),
         data={
             "from": "Dungeon Of Developers <devrishisikka@mail.dungeonofdevs.tech>",
             "to": f"{participant_name} <{participant_email}>",
