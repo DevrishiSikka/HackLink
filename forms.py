@@ -1,4 +1,5 @@
 from flask_wtf import FlaskForm
+from flask_wtf.file import FileAllowed, FileRequired, FileField
 from wtforms import StringField, SelectField, SubmitField, EmailField, TelField
 from wtforms.validators import InputRequired
 
@@ -12,4 +13,8 @@ class ParticipantForm(FlaskForm):
   hostel_block = SelectField('Hostel Block', choices=[('A', 'A Block'), ('B', 'B Block'), ('C', 'C Block'), ('D', 'D Block')], validators=[InputRequired()], render_kw={"id": "hostelBlock"})
   gender = SelectField('Gender', choices=[('male', 'Male'), ('female', 'Female')], validators=[InputRequired()], render_kw={"id": "genderSelection"})
   submit_button = SubmitField('Submit')
+
+class UploadForm(FlaskForm):
+    file = FileField("File", validators=[
+        FileRequired()])
 

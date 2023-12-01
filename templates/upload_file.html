@@ -49,18 +49,23 @@
       </h3>
       <div class="card">
         <h3>Upload Files</h3>
-        <div class="drop_box">
-          <input
-            type="file"
-            hidden
-            accept=".xlsx"
-            id="fileID"
-            style="display: none"
-          />
-          <button class="btn">Choose File</button>
-        </div>
+
+        <form
+          method="POST"
+          action="/participant/upload"
+          enctype="multipart/form-data"
+        >
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            <div class="label">
+              {{form.file(class="custom-file-input",accept=".xlsx,
+              application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+              }}
+            </div>
+          </div>
+          <input type="submit" value="Submit" class="btn" />
+        </form>
       </div>
     </div>
   </body>
-  <script src="{{url_for('static', filename='scripts/fileupload.js')}}"></script>
 </html>

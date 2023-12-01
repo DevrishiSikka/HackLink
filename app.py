@@ -1,5 +1,5 @@
-from flask import Flask, render_template, request, jsonify
-from forms import ParticipantForm
+from flask import Flask, render_template, request, jsonify, redirect, url_for
+from forms import ParticipantForm, UploadForm
 from sqlalchemy import func
 import uuid
 import requests
@@ -7,6 +7,8 @@ import qrcode
 import configparser
 from werkzeug.utils import secure_filename
 import os
+from flask_socketio import SocketIO
+from celery import Celery
 
 # -------------------LOAD-CREDENTIALS--------------------------------------------------------------#
 
@@ -22,9 +24,17 @@ credentials = load_credentials()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = credentials.get("secret_key",'')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['ALLOWED_EXTENTIONS'] = {'xlsx'}
-app.config['UPLOAD_FOLDER'] = '/uploads'
+app.config['ALLOWED_EXTENTIONS'] = {'xlsx', 'png'}
+app.config['UPLOAD_FOLDER'] = 'uploads'
 
+#--------------------------------CELARY-CONFIG-FOR-PROCESS-SCEDULING------------------------------#
+
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
+
+socketio = SocketIO(app)
 
 from models import Participant, db
 
@@ -40,7 +50,7 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
        files = [("attachment", ("qrcode.png", open(f"qrcodes/{filename}.png", "rb").read(), "image/png"))]
        response = requests.post(
         "https://api.mailgun.net/v3/mail.dungeonofdevs.tech/messages",
-        auth=("api", "b4723e863e8c6412293738c7c6cdcc20-5d2b1caa-2cc41297"),
+        auth=("api", f"{credentials.get("api_key",'')}"),
         data={
             "from": "Dungeon Of Developers <devrishisikka@mail.dungeonofdevs.tech>",
             "to": f"{participant_name} <{participant_email}>",
@@ -59,6 +69,20 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
 # ALLOWED FILE EXTENTION
 def allowed_file(filename : str):
   return "." in filename and filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENTIONS']
+
+
+# --------------------------------------- CELERY-TASK-SCHEDULER ------------------------------------------------#
+
+@celery.task(bind=True)
+def processExceltoDatabase(self, filename):
+    import pandas as pd
+
+    df = pd.read_excel(filename)
+
+    #TODO To complete this code abhi im just making a dummy return 
+
+    pass
+
 
 # --------------------------------------- MAIN-ROUTES ------------------------------------------------#
 
@@ -158,20 +182,29 @@ def userInfo(slug):
         return jsonify({'error': 'Participant not found'}), 404
 
 
+# ----------------------------------------UPLOAD-FILE-ROUTE---------------------------------------------#
+
+
 @app.route("/participant/upload", methods=['POST','GET'])
 def uploadList():
-    error = False
+    form = UploadForm()
     if request.method == "POST":
-        if "file" in request.files:
-            file = request.files['file']
-            if file and allowed_file(file.filename):
-                secure_filename = secure_filename(file.filename)
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], secure_filename))
-            else:
-                return render_template('upload_file.html', error=True)
-    return render_template('upload_file.html', error=False)
+        if 'file' not in request.files:
+            return redirect(url_for('uploadList'))
+        file = form.file.data
+
+        if file.filename == '':
+            print("NOT SELECTED")
+            return redirect(url_for('uploadList'))
+        
+        if file.filename and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return render_template("upload_file.html", form=form)
+    return render_template("upload_file.html", form=form)
 
 # ----------------------------------------QR-SCANNER-UTILITY---------------------------------------------#
+
 @app.route("/scanqr")
 def scanQR():
     return render_template('qrScanner.html')
@@ -192,3 +225,6 @@ def QRScannData():
             return jsonify({'data':'Not Found', 'present': False})
     except Exception as e:
         return jsonify({'error': str(e)})
+    
+
+# ----------------------------------------QR-SCANNER-UTILITY---------------------------------------------#
