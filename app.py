@@ -225,6 +225,3 @@ def QRScannData():
             return jsonify({'data':'Not Found', 'present': False})
     except Exception as e:
         return jsonify({'error': str(e)})
-    
-
-# ----------------------------------------QR-SCANNER-UTILITY---------------------------------------------#
