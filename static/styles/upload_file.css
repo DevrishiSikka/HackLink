@@ -17,6 +17,7 @@
      display: flex;
      align-items: center;
      justify-content: center;
+     flex-direction: column;
 }
  .main-container {
      max-width: 1000px;
@@ -137,3 +138,6 @@
      background-color: #12121e;
 }
  
+.error{
+     color: aliceblue;
+}

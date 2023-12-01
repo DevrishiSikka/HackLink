@@ -24,7 +24,7 @@ credentials = load_credentials()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = credentials.get("secret_key",'')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///site.db'
-app.config['ALLOWED_EXTENTIONS'] = {'xlsx', 'png'}
+app.config['ALLOWED_EXTENTIONS'] = {'xlsx'}
 app.config['UPLOAD_FOLDER'] = 'uploads'
 
 #--------------------------------CELARY-CONFIG-FOR-PROCESS-SCEDULING------------------------------#
@@ -36,7 +36,7 @@ celery.conf.update(app.config)
 
 socketio = SocketIO(app)
 
-from models import Participant, db
+from models import Participant, Files ,db
 
 # --------------------------------------- UTIL-FUNCTIONS ------------------------------------------#
 
@@ -78,10 +78,8 @@ def processExceltoDatabase(self, filename):
     import pandas as pd
 
     df = pd.read_excel(filename)
-
-    #TODO To complete this code abhi im just making a dummy return 
-
-    pass
+    print(df)
+    
 
 
 # --------------------------------------- MAIN-ROUTES ------------------------------------------------#
@@ -185,23 +183,33 @@ def userInfo(slug):
 # ----------------------------------------UPLOAD-FILE-ROUTE---------------------------------------------#
 
 
-@app.route("/participant/upload", methods=['POST','GET'])
+@app.route("/participant/upload", methods=['POST', 'GET'])
 def uploadList():
     form = UploadForm()
     if request.method == "POST":
         if 'file' not in request.files:
-            return redirect(url_for('uploadList'))
+            return render_template('upload_list.html')
+
         file = form.file.data
 
         if file.filename == '':
-            print("NOT SELECTED")
-            return redirect(url_for('uploadList'))
-        
+            return render_template('upload_list.html')
+
         if file.filename and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            new_file = Files(
+                filename = filename
+            )
+            db.session.add(new_file)
+            db.session.commit()
+
+            processExceltoDatabase.delay(filename)
             return render_template("upload_file.html", form=form)
+
+    # Pass error_dict to the template in the default case as well
     return render_template("upload_file.html", form=form)
+
 
 # ----------------------------------------QR-SCANNER-UTILITY---------------------------------------------#
 

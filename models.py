@@ -1,5 +1,6 @@
 from app import app
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy(app=app)
 
@@ -16,3 +17,8 @@ class Participant(db.Model):
     checked_in = db.Column(db.Boolean, default = False)
     onboarding_email_sent = db.Column(db.Boolean, default=False, nullable=False)
     slug = db.Column(db.String(100), nullable=False)
+
+class Files(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
