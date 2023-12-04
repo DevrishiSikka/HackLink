@@ -157,7 +157,7 @@
             <tbody>
               {% for participant in datalist %}
               <tr>
-                <td>{{ participant.participant_name }}</td>
+                <td>{{ participant.participant_name|title }}</td>
                 <td>{{ participant.team_name|capitalize }}</td>
                 <td>{{ participant.gender|capitalize }}</td>
                 {% if participant.checked_in == False %}

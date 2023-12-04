@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 from forms import ParticipantForm, UploadForm
 from sqlalchemy import func
+from sqlalchemy.exc import IntegrityError
 import uuid
 import requests
 import qrcode
@@ -31,7 +32,7 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
-celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['CELERY_RESULT_BACKEND'])
 celery.conf.update(app.config)
 
 socketio = SocketIO(app)
@@ -50,7 +51,7 @@ def mailAfterParticipant(participant_name, participant_team_name, filename, part
        files = [("attachment", ("qrcode.png", open(f"qrcodes/{filename}.png", "rb").read(), "image/png"))]
        response = requests.post(
         "https://api.mailgun.net/v3/mail.dungeonofdevs.tech/messages",
-        auth=("api", f"{credentials.get("api_key",'')}"),
+        auth=("api", credentials.get("api_key",'')),
         data={
             "from": "Dungeon Of Developers <devrishisikka@mail.dungeonofdevs.tech>",
             "to": f"{participant_name} <{participant_email}>",
@@ -71,15 +72,60 @@ def allowed_file(filename : str):
   return "." in filename and filename.rsplit('.',1)[1] in app.config['ALLOWED_EXTENTIONS']
 
 
+#QR CODE MAKER UTILITY
+
+def makeQrCode(registerNumber, slug):
+    qr = qrcode.QRCode(
+                version=1,  
+                error_correction=qrcode.constants.ERROR_CORRECT_H, 
+                box_size=10,  
+                border=4,  
+            )
+    qr.add_data(slug)
+    qr.make(fit=True)
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+    qr_image.save(f"qrcodes/{registerNumber}.png")
+
 # --------------------------------------- CELERY-TASK-SCHEDULER ------------------------------------------------#
 
 @celery.task(bind=True)
 def processExceltoDatabase(self, filename):
     import pandas as pd
 
-    df = pd.read_excel(filename)
-    print(df)
-    
+    with app.app_context():
+        df = pd.read_excel(os.path.join("uploads", filename))
+        total_rows = len(df)
+        current_row = 0
+
+        for index, row in df.iterrows():
+            try:
+                row_dict = row.to_dict()
+
+                existing_participant = Participant.query.filter_by(register_number=str(row_dict['Register_Number'])).first()
+
+                if existing_participant:
+                    continue
+                else:
+                    slug_value = str(uuid.uuid4())[:15].replace("-","")
+                    new_participant = Participant(
+                        participant_name=row_dict['Participant_Name'].lower(),
+                        register_number=row_dict['Register_Number'],
+                        team_name=row_dict['Team_Name'].lower(),
+                        mobile_number=row_dict['Mobile_Number'],
+                        accomodation=row_dict['Accomodation\n ( Hostel / Dayscholar )'].lower(),
+                        email_id=row_dict['Email_Id'].lower(),
+                        hostel_block=row_dict['Hostel_Block\n( A,B,C,D )'].lower(),
+                        gender=row_dict['Gender\n(M / F)'].lower(),
+                        slug=slug_value
+                    )
+                    makeQrCode(registerNumber=row_dict['Register_Number'], slug=slug_value)
+                    db.session.add(new_participant)
+                    db.session.commit()
+            except Exception as e:
+                print(e)
+                
+
+
 
 
 # --------------------------------------- MAIN-ROUTES ------------------------------------------------#
@@ -90,8 +136,9 @@ def main_page():
   female_count = db.session.query(func.count(Participant.id)).filter(Participant.gender == 'female').scalar()
   hosteller_Count = db.session.query(func.count(Participant.id)).filter(Participant.accomodation == 'hostel').scalar()
   dayscholar_Count = db.session.query(func.count(Participant.id)).filter(Participant.accomodation == 'dayscholar').scalar()
-  checked_in_count = db.session.query(func.count(Participant.id)).filter(Participant.checked_in=='False').scalar()
+  checked_in_count = db.session.query(func.count(Participant.id)).filter(Participant.checked_in== True).scalar()
   total_participants = db.session.query(func.count(Participant.id)).scalar()
+
   return render_template('index.html', male_count=male_count, female_count=female_count, hosteller_Count=hosteller_Count, dayscholar_Count=dayscholar_Count, checked_in_count=checked_in_count, total_participants=total_participants)
 
 
@@ -137,17 +184,7 @@ def addParticipant():
           db.session.commit()
 
         try:
-            qr = qrcode.QRCode(
-                version=1,  
-                error_correction=qrcode.constants.ERROR_CORRECT_H, 
-                box_size=10,  
-                border=4,  
-            )
-            qr.add_data(slug_value)
-            qr.make(fit=True)
-            qr_image = qr.make_image(fill_color="black", back_color="white")
-            qr_image.save(f"qrcodes/{register_number}.png")
-
+            makeQrCode(registerNumber=register_number, slug=slug_value)
             mailAfterParticipant(participant_name=participant_name, participant_team_name=team_name, filename=register_number,participant_email= email_id)
             new_participant = Participant.query.filter_by(register_number=register_number).first()
             new_participant.onboarding_email_sent = True
@@ -186,28 +223,31 @@ def userInfo(slug):
 @app.route("/participant/upload", methods=['POST', 'GET'])
 def uploadList():
     form = UploadForm()
+
     if request.method == "POST":
         if 'file' not in request.files:
-            return render_template('upload_list.html')
+            return render_template('upload_file.html')
 
         file = form.file.data
 
         if file.filename == '':
-            return render_template('upload_list.html')
+            return render_template('upload_file.html')
 
         if file.filename and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            random_filename = str(uuid.uuid4())
+            file_extention = file.filename.rsplit('.',1)[1].lower()
+            new_filename = f"{random_filename}.{file_extention}"
+
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'],new_filename))
             new_file = Files(
-                filename = filename
+                filename = new_filename
             )
             db.session.add(new_file)
             db.session.commit()
 
-            processExceltoDatabase.delay(filename)
-            return render_template("upload_file.html", form=form)
+            processExceltoDatabase.delay(new_filename)
+            return redirect(url_for('dashboard'))
 
-    # Pass error_dict to the template in the default case as well
     return render_template("upload_file.html", form=form)
 
 
