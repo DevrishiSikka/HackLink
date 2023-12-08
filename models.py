@@ -22,3 +22,17 @@ class Files(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     filename = db.Column(db.String(200), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Form(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_name = db.Column(db.String(200), nullable=False)
+    form_details = db.Column(db.String(250), nullable=False)
+    slug = db.Column(db.String(100), nullable=False)
+
+class FormFields(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    form_uid = db.Column(db.Integer, db.ForeignKey('form.id'), nullable=False)
+    form = db.relationship('Form', backref='form_fields')
+    question = db.Column(db.String(255), nullable=False)
+    input_type = db.Column(db.String(50), nullable=False)
+

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link
+      href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
+      rel="stylesheet"
+  />
+  <link
+      rel="stylesheet"
+      href="{{url_for('static', filename='styles/feedbackDash.css')}}"
+    />
+  <title>Feedback Dashboard</title>
+</head>
+<body>
+  <nav>
+      <div class="vertical-navbar">
+        <div class="menu-item" data-tooltip="Dashboard">
+          <a href="{{ url_for('dashboard') }}"
+            ><i class="ri-dashboard-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item active" data-tooltip="Upload List">
+          <a href="{{ url_for('uploadList')}}"
+            ><i class="ri-upload-cloud-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item active" data-tooltip="Add Participant">
+          <a href="{{ url_for('addParticipant') }}"
+            ><i class="ri-user-add-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Event Stats">
+          <a href="{{ url_for('main_page') }}"
+            ><i class="ri-line-chart-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Feedback Dashboard">
+          <a href="{{ url_for('feedbackDashboard') }}"
+            ><i class="ri-feedback-line ri-sm"></i
+          ></a>
+        </div>
+      </div>
+    </nav>
+  <div class="wrapper">
+    <header>
+      <h1>FeedBack Forms</h1>
+      <button type="button" class="create_form">Create New Form</button>
+    </header>
+    <div class="form-list">
+      <div class="form-container">
+        {% if datalist %}
+          {% for form in datalist %}
+            <div class="form-card">
+              <div class="name">
+                <h3>{{form.form_name|title}}</h3>
+              </div>
+              <div class="description">
+                <p>{{form.form_details|title}}</p>
+              </div>
+              <a href="{{url_for('viewForm', uuid=form.slug)}}">
+                <svg xmlns="http://www.w3.org/2000/svg" data-name="Layer 1" viewBox="0 0 37.17 79.2" x="0px" y="0px"><defs><style>
+                  .cls-1 {
+                    stroke-width: 0px;
+                  }
+                </style></defs><g data-name="Group 11687"><g data-name="Path 7486"><path class="cls-1" d="m18.56,63.36c-.83,0-1.5-.67-1.5-1.5V2.97c0-.83.67-1.5,1.5-1.5s1.5.67,1.5,1.5v58.89c0,.83-.67,1.5-1.5,1.5Z"/></g><g data-name="Path 7487"><path class="cls-1" d="m1.5,18.01c-.42,0-.84-.18-1.13-.52-.54-.63-.48-1.57.15-2.12L17.83.37c.57-.49,1.42-.49,1.98.01l16.85,15.01c.62.55.67,1.5.12,2.12-.55.62-1.5.67-2.12.12L18.8,3.5,2.48,17.64c-.28.25-.63.37-.98.37Z"/></g></g></svg>
+              </a>
+            </div>
+          {% endfor %}
+        {% else %}
+          <p class="no-data-available">No Data Available</p>
+        {% endif %}
+      </div>
+    <div id="popup" class="popup">
+    <h2>Create New Form</h2>
+    <form id="createForm">
+      <label for="formName">Form Name:</label>
+      <input type="text" id="formName" name="formName" required>
+      
+      <label for="formDescription">Form Description:</label>
+      <textarea id="formDescription" name="formDescription" required></textarea>
+
+      <button type="button" id="submit">Submit</button>
+      <button type="button" id="close" >Close</button>
+    </form>
+  </div>
+  </div>
+  <script src="{{url_for('static', filename='scripts/feedbackDash.js')}}"></script>
+</body>
+</html>

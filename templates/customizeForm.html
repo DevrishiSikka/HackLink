@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Custom Feedback System</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    form {
+      max-width: 600px;
+      margin: 20px auto;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    select {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    .add-question {
+      background-color: #4caf50;
+      color: white;
+      padding: 10px 15px;
+      border: none;
+      cursor: pointer;
+    }
+
+    .remove-question {
+      background-color: #ff3333;
+      color: white;
+      padding: 5px 8px;
+      border: none;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="customFeedbackForm" action="/form/new" method="post">
+    <div id="questionsContainer">
+      <!-- Questions will be dynamically added here -->
+    </div>
+
+    <button type="button" class="add-question" onclick="addQuestion()">Add Question</button>
+    <input type="submit" value="Submit">
+  </form>
+
+  <script>
+    function addQuestion() {
+      const questionsContainer = document.getElementById('questionsContainer');
+
+      const questionDiv = document.createElement('div');
+      questionDiv.classList.add('form-group');
+
+      const questionLabel = document.createElement('label');
+      questionLabel.textContent = 'Question:';
+      questionDiv.appendChild(questionLabel);
+
+      const questionInput = document.createElement('input');
+      questionInput.type = 'text';
+      questionInput.name = 'questions[]';
+      questionInput.required = true;
+      questionDiv.appendChild(questionInput);
+
+      const inputTypeLabel = document.createElement('label');
+      inputTypeLabel.textContent = 'Input Type:';
+      questionDiv.appendChild(inputTypeLabel);
+
+      const inputTypeSelect = document.createElement('select');
+      inputTypeSelect.name = 'inputTypes[]';
+      inputTypeSelect.required = true;
+
+      const optionText = ['Text', 'Rating', 'Yes/No'];
+      const optionValues = ['text', 'rating', 'yesno'];
+
+      for (let i = 0; i < optionText.length; i++) {
+        const option = document.createElement('option');
+        option.value = optionValues[i];
+        option.text = optionText[i];
+        inputTypeSelect.appendChild(option);
+      }
+
+      questionDiv.appendChild(inputTypeSelect);
+
+      const removeButton = document.createElement('button');
+      removeButton.type = 'button';
+      removeButton.classList.add('remove-question');
+      removeButton.textContent = 'Remove';
+      removeButton.onclick = function () {
+        questionsContainer.removeChild(questionDiv);
+      };
+
+      questionDiv.appendChild(removeButton);
+
+      questionsContainer.appendChild(questionDiv);
+    }
+  </script>
+
+</body>
+</html>

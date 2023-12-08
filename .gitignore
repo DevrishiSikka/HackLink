@@ -1,6 +1,7 @@
 config.ini
 test.py
-/uploads
 venv
 dump.rdb
 __pycache__
+/test_pages
+/uploads

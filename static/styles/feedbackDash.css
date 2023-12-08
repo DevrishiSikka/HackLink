@@ -1,0 +1,219 @@
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "ClashGrotesk";
+}
+
+@font-face {
+  font-family: "ClashGrotesk";
+  src: url(/static/fonts/ClashGrotesk-Variable.ttf);
+}
+
+::-webkit-scrollbar {
+  width: 3px;
+}
+
+body {
+  background-color: #12121e;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wrapper {
+  height: 90%;
+  width: 90%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: aliceblue;
+}
+
+.form-list {
+  border: 2px dotted aliceblue;
+  height: 100%;
+  border-radius: 10px;
+  box-sizing: border-box;
+  padding: 1.2rem;
+  overflow: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+button[type="button"] {
+  width: max-content;
+  box-sizing: border-box;
+  padding: 0.8rem;
+  align-self: flex-end;
+  border-radius: 10px;
+  outline: none;
+  font-weight: 500;
+}
+
+.form-card {
+  width: 300px;
+  height: 200px;
+  background-color: #1d1d2a;
+  border-radius: 8px;
+  color: aliceblue;
+  box-sizing: border-box;
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 13px;
+}
+
+.form-container {
+  height: max-content;
+  width: 93%;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  overflow: auto;
+}
+
+.more-info-feedback {
+  width: max-content;
+}
+
+.form-card svg {
+  fill: aliceblue;
+  transform: rotate(90deg);
+  margin-right: 20px;
+  cursor: pointer;
+}
+
+
+.form-card a {
+  align-self: flex-end;
+  height: 20px;
+  width: 35px;
+}
+
+.form-card h3 {
+  font-weight: 500;
+}
+
+a {
+  text-decoration: none;
+  color: aliceblue;
+}
+
+.vertical-navbar {
+  height: 100%;
+  width: 40px;
+  position: fixed;
+  left: 0;
+  top: 0;
+  background-color: #1d1d2a;
+  padding-top: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 20px 0 20px;
+}
+
+.menu-item {
+  text-align: center;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.menu-item i {
+  font-size: 24px;
+}
+
+.menu-item:hover {
+  background-color: #12121e;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  content: attr(data-tooltip);
+  background-color: #333;
+  color: #fff;
+  padding: 5px;
+  border-radius: 5px;
+  position: absolute;
+  left: 100%;
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.menu-item[data-tooltip]:hover::before {
+  opacity: 1;
+  margin-left: 10px;
+}
+
+.no-data-available{
+  font-weight: 500;
+  color: rgba(240, 248, 255, 0.756);
+  font-size: 1.2rem;
+  margin-top: auto;
+  margin-bottom: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Add this CSS style to your existing styles/feedbackDash.css or create a new CSS file */
+
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.popup h2 {
+  margin-bottom: 15px;
+}
+
+.popup label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+.popup input,
+.popup textarea {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 15px;
+  box-sizing: border-box;
+}
+
+.popup button {
+  background-color: #007bff;
+  color: #fff;
+  padding: 10px 15px;
+  border: none;
+  cursor: pointer;
+}
+
+.popup button:hover {
+  background-color: #0056b3;
+}

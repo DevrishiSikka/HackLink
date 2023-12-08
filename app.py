@@ -1,15 +1,23 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+########################### TODO #################################
+# 1. ADD CUSTOM FEEDBACK FORM CREATION                           #
+# 2. ADD ROLE BASED ACCESS CONTROL                               #
+# 3. ADD BULK EMAIL FUNCTIONALITY                                #  
+# 4. ADD CUSTOM ANNOUNCEMENTS FUNCTIONALITY                      #    
+##################################################################
+
+
+
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, jsonify
 from forms import ParticipantForm, UploadForm
 from sqlalchemy import func
-from sqlalchemy.exc import IntegrityError
 import uuid
 import requests
 import qrcode
 import configparser
-from werkzeug.utils import secure_filename
 import os
 from flask_socketio import SocketIO
 from celery import Celery
+import time
 
 # -------------------LOAD-CREDENTIALS--------------------------------------------------------------#
 
@@ -35,9 +43,18 @@ app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'], backend=app.config['CELERY_RESULT_BACKEND'])
 celery.conf.update(app.config)
 
-socketio = SocketIO(app)
 
-from models import Participant, Files ,db
+from models import Participant, Files , Form, FormFields, db
+
+# ----------------------------------  CUSTOM JINJA FILTERS ----------------------------------------#
+def truncate_ellipsis(value, length):
+    if len(value) <= length:
+        return value
+    else:
+        return value[:length] + '...'
+
+
+app.jinja_env.filters['truncate_ellipsis'] = truncate_ellipsis
 
 # --------------------------------------- UTIL-FUNCTIONS ------------------------------------------#
 
@@ -94,6 +111,7 @@ def processExceltoDatabase(self, filename):
 
     with app.app_context():
         df = pd.read_excel(os.path.join("uploads", filename))
+        
         total_rows = len(df)
         current_row = 0
 
@@ -121,12 +139,14 @@ def processExceltoDatabase(self, filename):
                     makeQrCode(registerNumber=row_dict['Register_Number'], slug=slug_value)
                     db.session.add(new_participant)
                     db.session.commit()
+                    current_row += 1
+                    progress = current_row / total_rows * 100
+
+                    time.sleep(0.5)
             except Exception as e:
                 print(e)
+
                 
-
-
-
 
 # --------------------------------------- MAIN-ROUTES ------------------------------------------------#
 
@@ -273,3 +293,54 @@ def QRScannData():
             return jsonify({'data':'Not Found', 'present': False})
     except Exception as e:
         return jsonify({'error': str(e)})
+
+
+# ----------------------------------------FEEDBACK-ROUTES---------------------------------------------#
+
+@app.route("/feedback")
+def feedbackDashboard():
+    feedback_forms = Form.query.all()
+    return render_template("feedbackDash.html", datalist = feedback_forms)
+
+@app.route('/feedback/form/create', methods=['POST'])
+def submit_form():
+    if request.method == 'POST':
+        data = request.get_json()
+
+        form_name = data.get('formName')
+        form_description = data.get('formDescription')
+        form_uuid = str(uuid.uuid4()).replace("-","")
+
+        new_form = Form(
+            form_name = form_name,
+            form_details = form_description,
+            slug = form_uuid
+        )
+
+        db.session.add(new_form)
+        db.session.commit()
+
+        return jsonify({'success': True, 'uuid': form_uuid})
+
+
+@app.route('/feedback/form/new', methods=['GET', 'POST'])
+def new_page():
+    uuid_param = request.args.get('uuid')
+    if uuid_param == None:
+        return redirect(url_for("feedbackDashboard"))
+
+    if request.method == 'POST':
+        questions = request.form.getlist('questions[]')
+        input_types = request.form.getlist('inputTypes[]')
+
+        # Process the submitted data
+        print("Submitted Questions:")
+        for question, input_type in zip(questions, input_types):
+            print(f"Question: {question}, Input Type: {input_type}")
+        print(f"UUID:{uuid_param}")
+    return render_template('customizeForm.html')
+
+@app.route('/feedback/form')
+def viewForm():
+    uuid_param = request.args.get('uuid')
+    return f"<h1>{uuid_param}</h1>"

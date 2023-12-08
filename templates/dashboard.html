@@ -11,6 +11,8 @@
       href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css"
       rel="stylesheet"
     />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.js"></script>
+
     <title>DOD - Dashboard</title>
   </head>
   <body>
@@ -34,6 +36,11 @@
         <div class="menu-item" data-tooltip="Event Stats">
           <a href="{{ url_for('main_page') }}"
             ><i class="ri-line-chart-line ri-sm"></i
+          ></a>
+        </div>
+        <div class="menu-item" data-tooltip="Feedback Dashboard">
+          <a href="{{ url_for('feedbackDashboard') }}"
+            ><i class="ri-feedback-line ri-sm"></i
           ></a>
         </div>
       </div>
@@ -152,15 +159,21 @@
                 <th>Team Name</th>
                 <th>Gender</th>
                 <th>Checked In</th>
+                <th>Email Sent</th>
               </tr>
             </thead>
             <tbody>
               {% for participant in datalist %}
               <tr>
-                <td>{{ participant.participant_name|title }}</td>
+                <td>{{ participant.participant_name|title| truncate_ellipsis(10) }}</td>
                 <td>{{ participant.team_name|capitalize }}</td>
                 <td>{{ participant.gender|capitalize }}</td>
                 {% if participant.checked_in == False %}
+                <td><i class="ri-close-line"></i></td>
+                {% else %}
+                <td><i class="ri-check-double-fill"></i></td>
+                {% endif %}
+                {% if participant.onboarding_email_sent == False %}
                 <td><i class="ri-close-line"></i></td>
                 {% else %}
                 <td><i class="ri-check-double-fill"></i></td>
@@ -183,4 +196,5 @@
     </div>
   </body>
   <script src="{{url_for('static', filename='scripts/sorter.js')}}"></script>
+  
 </html>
